@@ -17,7 +17,7 @@ RUN apt-get update \
     && mv "/opt/llama-${PRISM_TAG}" /opt/prism \
     && rm /tmp/prism.tar.gz \
     && ln -sf /opt/prism/llama-server /usr/local/bin/llama-server \
-    && printf '#!/bin/sh\n# Prefer the host-injected driver; fall back to the bundled cuda-compat libs.\nif ! ldconfig -p 2>/dev/null | grep -q "libcuda.so.1"; then\n  export LD_LIBRARY_PATH="/usr/local/cuda/compat:${LD_LIBRARY_PATH:-}"\nfi\nexec /opt/prism/llama-server "$@"\n' > /usr/local/bin/entrypoint.sh \
+    && printf '#!/bin/sh\necho "== entrypoint diagnostics =="\nls /dev/nvidia* 2>/dev/null || echo "DIAG: no /dev/nvidia* devices"\n[ -f /proc/driver/nvidia/version ] && cat /proc/driver/nvidia/version || echo "DIAG: no nvidia kernel driver"\necho "DIAG: ldconfig libcuda: $(ldconfig -p 2>/dev/null | grep libcuda.so.1 | head -1 || echo none)"\necho "DIAG: NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-unset} NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:-unset}"\nif ! ldconfig -p 2>/dev/null | grep -q "libcuda.so.1"; then\n  export LD_LIBRARY_PATH="/usr/local/cuda/compat:${LD_LIBRARY_PATH:-}"\n  echo "DIAG: host driver not injected, using bundled cuda-compat"\nfi\nexec /opt/prism/llama-server "$@"\n' > /usr/local/bin/entrypoint.sh \
     && chmod +x /usr/local/bin/entrypoint.sh
 
 ENV LD_LIBRARY_PATH=/opt/prism \
