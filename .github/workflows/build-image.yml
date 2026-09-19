@@ -29,7 +29,7 @@ jobs:
           tags: |
             type=raw,value=latest
             type=raw,value=prism-b10685
-            type=raw,value=v3
+            type=raw,value=v4
 
       - uses: docker/build-push-action@v6
         with:
