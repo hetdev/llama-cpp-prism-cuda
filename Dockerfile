@@ -23,7 +23,8 @@ RUN apt-get update \
     && chmod +x /usr/local/bin/entrypoint.sh
 
 ENV LD_LIBRARY_PATH=/opt/prism \
-    HF_HOME=/tmp/hf
+    HF_HOME=/tmp/hf \
+    LORA_ALPHA=2
 
 EXPOSE 80
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
